@@ -17,6 +17,10 @@ seq:
   - id: trip_block
     type: trip_block
     if: header.flags.trip_block_present == true
+  - id: supplement_blocks
+    type: supplement_block
+    repeat: expr
+    repeat-expr: header.supplement_block_count
   - id: reservation_blocks
     type: reservation_block
     repeat: expr
@@ -57,7 +61,7 @@ types:
         type: f4
       - id: flags
         type: header_flags
-      - id: reserved_1
+      - id: supplement_block_count
         type: u1
       - id: reservation_block_count
         type: u1
@@ -128,6 +132,27 @@ types:
         type: u1
       - id: discount_name
         size: 4
+
+  supplement_block:
+    seq:
+      - id: departure_station
+        type: uic_station_id
+      - id: destination_station
+        type: uic_station_id
+      - id: class
+        type: str
+        size: 1
+      - id: ticket_name
+        type: u4
+      - id: valid_from
+        type: mav_timestamp
+      - id: validity_length
+        type: b24
+        doc: In minutes.
+      - id: number_of_passengers
+        type: u1
+      - id: discount_name
+        type: u4
 
   reservation_block:
     seq:
