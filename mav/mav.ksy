@@ -90,8 +90,9 @@ types:
         type: u1
       - id: reserved_2
         size: 3
-      - id: unknown_1
+      - id: ticket_medium
         type: u4
+        enum: ticket_medium
 
   mav_birth_date:
     doc: Encoded as year * 10000 + month * 100 + day
@@ -123,6 +124,16 @@ types:
     seq:
       - id: station_id
         type: b24
+  validity_length:
+    doc: Length of a validity period in minutes.
+    seq:
+      - id: minutes
+        type:
+          switch-on: _root.version
+          cases:
+            2: u2
+            3: u2
+            _: b24
   trip_block:
     seq:
       - id: ticket_name
@@ -149,8 +160,7 @@ types:
       - id: departure_time
         type: mav_timestamp
       - id: validity_length
-        type: b24
-        doc: In minutes.
+        type: validity_length
       - id: number_of_passengers
         type: u1
       - id: discount_name
@@ -170,8 +180,7 @@ types:
       - id: valid_from
         type: mav_timestamp
       - id: validity_length
-        type: b24
-        doc: In minutes.
+        type: validity_length
       - id: number_of_passengers
         type: u1
       - id: discount_name
@@ -211,14 +220,23 @@ types:
       - id: pass_name
         type: u4
         doc: Mapping of values to actual ticket types still unknown.
-      - id: discount_name
+      - id: discount_name_1
         type: u4
-      - id: unknown
+      - id: discount_name_2
         type: u4
       - id: valid_from
         type: mav_timestamp
       - id: valid_until
-        type: b24
-        doc: In minutes.
+        type: validity_length
       - id: number_of_passengers
         type: u1
+
+enums:
+  ticket_medium:
+    0x236d0520: electronic_pdf_from_app
+    0x54a5b34d: thermal_paper_from_emke
+    0x691b8d67: hologram_paper_from_volanbusz
+    0xa7d59ea6: paper_from_vending_machine
+    0xc785b60c: paper_bkk_pass
+    0x338797fe: electronic_pdf_from_web
+    0xf8b405cd: thermal_paper_from_ticket_inspector
